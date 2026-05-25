@@ -1,11 +1,19 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, Tag, Truck, X } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { Link } from "@tanstack/react-router";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export function CartDrawer() {
-  const { items, open, setOpen, setQty, remove, subtotal } = useCart();
+  const { items, open, setOpen, setQty, remove, subtotal, coupon, applyCoupon, removeCoupon, discount } = useCart();
+  const [code, setCode] = useState("");
+  const [area, setArea] = useState("dhaka");
+  const delivery = area === "express" ? 9.99 : area === "outside" ? 5.99 : subtotal > 50 ? 0 : 2.99;
+  const total = Math.max(0, subtotal - discount) + (items.length ? delivery : 0);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -60,11 +68,38 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <SheetFooter className="border-t border-border bg-muted/20 p-5">
+          <SheetFooter className="flex-col border-t border-border bg-muted/20 p-5">
             <div className="w-full space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-bold">${subtotal.toFixed(2)}</span>
+              <div>
+                <label className="mb-1 flex items-center gap-1 text-xs font-medium"><Tag className="h-3.5 w-3.5" />Coupon code <span className="ml-auto text-muted-foreground">try SAVE10, MEGA20</span></label>
+                {coupon ? (
+                  <div className="flex items-center justify-between rounded border border-success/30 bg-success/10 px-3 py-2 text-sm">
+                    <span className="font-medium text-success">{coupon} applied</span>
+                    <button onClick={removeCoupon} aria-label="Remove coupon"><X className="h-4 w-4" /></button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter code" className="h-9" />
+                    <Button size="sm" onClick={() => { const r = applyCoupon(code); r.ok ? toast.success(r.message) : toast.error(r.message); setCode(""); }}>Apply</Button>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-1 text-xs font-medium"><Truck className="h-3.5 w-3.5" />Delivery</label>
+                <Select value={area} onValueChange={setArea}>
+                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dhaka">Inside Dhaka — {subtotal > 50 ? "FREE" : "$2.99"}</SelectItem>
+                    <SelectItem value="outside">Outside Dhaka — $5.99</SelectItem>
+                    <SelectItem value="express">Express (Same day) — $9.99</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1 border-t border-border pt-2 text-sm">
+                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+                {discount > 0 && <div className="flex justify-between text-success"><span>Discount</span><span>-${discount.toFixed(2)}</span></div>}
+                <div className="flex justify-between"><span className="text-muted-foreground">Delivery</span><span>{delivery === 0 ? "FREE" : `$${delivery.toFixed(2)}`}</span></div>
+                <div className="flex justify-between border-t border-border pt-1 text-base font-bold"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
               </div>
               <Link to="/checkout" onClick={() => setOpen(false)}>
                 <Button className="w-full" size="lg">Proceed to Checkout</Button>
