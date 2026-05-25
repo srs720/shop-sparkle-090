@@ -6,7 +6,8 @@ export const Route = createFileRoute("/account")({
   component: AccountLayout,
 });
 
-const nav = [
+type Nav = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const nav: Nav[] = [
   { to: "/account", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/account/orders", label: "Orders & Tracking", icon: Package },
   { to: "/account/returns", label: "Returns & Refunds", icon: RotateCcw },
@@ -14,7 +15,7 @@ const nav = [
   { to: "/account/wishlist", label: "Wishlists", icon: Heart },
   { to: "/account/addresses", label: "Address Book", icon: MapPin },
   { to: "/account/security", label: "Security & Privacy", icon: Shield },
-] as const;
+];
 
 function AccountLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
@@ -33,7 +34,7 @@ function AccountLayout() {
             {nav.map((n) => {
               const active = n.exact ? path === n.to : path.startsWith(n.to);
               return (
-                <Link key={n.to} to={n.to} className={`flex items-center gap-2 rounded-md px-3 py-2 transition ${active ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
+                <Link key={n.to} to={n.to as never} className={`flex items-center gap-2 rounded-md px-3 py-2 transition ${active ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
                   <n.icon className="h-4 w-4" /> {n.label}
                 </Link>
               );
