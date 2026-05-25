@@ -146,6 +146,17 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.dark {
+  --header-top: oklch(0.18 0.03 264);
+  --header-top-foreground: oklch(0.95 0.01 80);
+  --header-main: oklch(0.24 0.05 264);
+  --header-main-foreground: oklch(0.98 0.005 247);
+  --success: oklch(0.7 0.17 150);
+  --warning: oklch(0.8 0.17 75);
+  --gradient-flash: linear-gradient(90deg, oklch(0.68 0.19 40), oklch(0.6 0.24 25));
+  --gradient-hero: linear-gradient(135deg, oklch(0.55 0.21 260), oklch(0.68 0.19 40));
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
