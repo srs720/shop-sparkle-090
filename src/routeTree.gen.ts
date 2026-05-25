@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
@@ -32,6 +33,11 @@ const ProductsRoute = ProductsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
+  '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/account/addresses': typeof AccountAddressesRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/account/addresses': typeof AccountAddressesRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
+  '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/account/addresses': typeof AccountAddressesRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/checkout'
+    | '/compare'
     | '/login'
     | '/products'
     | '/account/addresses'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/checkout'
+    | '/compare'
     | '/login'
     | '/products'
     | '/account/addresses'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/checkout'
+    | '/compare'
     | '/login'
     | '/products'
     | '/account/addresses'
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRouteWithChildren
   CheckoutRoute: typeof CheckoutRoute
+  CompareRoute: typeof CompareRoute
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
   CategorySlugRoute: typeof CategorySlugRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -333,6 +353,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRouteWithChildren,
   CheckoutRoute: CheckoutRoute,
+  CompareRoute: CompareRoute,
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
   CategorySlugRoute: CategorySlugRoute,
