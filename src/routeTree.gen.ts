@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as AccountWishlistRouteImport } from './routes/account.wishlist'
 import { Route as AccountRewardsRouteImport } from './routes/account.rewards'
 import { Route as AccountReturnsRouteImport } from './routes/account.returns'
 import { Route as AccountOrdersRouteImport } from './routes/account.orders'
@@ -61,6 +62,11 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
   path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountWishlistRoute = AccountWishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => AccountRoute,
+} as any)
 const AccountRewardsRoute = AccountRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
   '/account/': typeof AccountIndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
   '/account': typeof AccountIndexRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
   '/account/': typeof AccountIndexRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
     | '/account/'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
     | '/account'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
     | '/account/'
@@ -225,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/wishlist': {
+      id: '/account/wishlist'
+      path: '/wishlist'
+      fullPath: '/account/wishlist'
+      preLoaderRoute: typeof AccountWishlistRouteImport
+      parentRoute: typeof AccountRoute
+    }
     '/account/rewards': {
       id: '/account/rewards'
       path: '/rewards'
@@ -253,6 +272,7 @@ interface AccountRouteChildren {
   AccountOrdersRoute: typeof AccountOrdersRoute
   AccountReturnsRoute: typeof AccountReturnsRoute
   AccountRewardsRoute: typeof AccountRewardsRoute
+  AccountWishlistRoute: typeof AccountWishlistRoute
   AccountIndexRoute: typeof AccountIndexRoute
 }
 
@@ -260,6 +280,7 @@ const AccountRouteChildren: AccountRouteChildren = {
   AccountOrdersRoute: AccountOrdersRoute,
   AccountReturnsRoute: AccountReturnsRoute,
   AccountRewardsRoute: AccountRewardsRoute,
+  AccountWishlistRoute: AccountWishlistRoute,
   AccountIndexRoute: AccountIndexRoute,
 }
 
