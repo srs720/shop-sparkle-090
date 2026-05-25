@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { getProduct, products } from "@/data/products";
+import { getProduct, products, type Product } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, Minus, Plus, Truck, Shield, RotateCcw, ChevronRight, ShoppingCart, Zap } from "lucide-react";
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/product/$id")({
       ],
     };
   },
-  loader: ({ params }) => {
+  loader: ({ params }): Product => {
     const p = getProduct(params.id);
     if (!p) throw notFound();
     return p;
