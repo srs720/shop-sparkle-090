@@ -18,6 +18,7 @@ import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as AccountWishlistRouteImport } from './routes/account.wishlist'
+import { Route as AccountSecurityRouteImport } from './routes/account.security'
 import { Route as AccountRewardsRouteImport } from './routes/account.rewards'
 import { Route as AccountReturnsRouteImport } from './routes/account.returns'
 import { Route as AccountOrdersRouteImport } from './routes/account.orders'
@@ -68,6 +69,11 @@ const AccountWishlistRoute = AccountWishlistRouteImport.update({
   path: '/wishlist',
   getParentRoute: () => AccountRoute,
 } as any)
+const AccountSecurityRoute = AccountSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AccountRoute,
+} as any)
 const AccountRewardsRoute = AccountRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/security': typeof AccountSecurityRoute
   '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/security': typeof AccountSecurityRoute
   '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
   '/account/rewards': typeof AccountRewardsRoute
+  '/account/security': typeof AccountSecurityRoute
   '/account/wishlist': typeof AccountWishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/security'
     | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/security'
     | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/returns'
     | '/account/rewards'
+    | '/account/security'
     | '/account/wishlist'
     | '/category/$slug'
     | '/product/$id'
@@ -256,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountWishlistRouteImport
       parentRoute: typeof AccountRoute
     }
+    '/account/security': {
+      id: '/account/security'
+      path: '/security'
+      fullPath: '/account/security'
+      preLoaderRoute: typeof AccountSecurityRouteImport
+      parentRoute: typeof AccountRoute
+    }
     '/account/rewards': {
       id: '/account/rewards'
       path: '/rewards'
@@ -292,6 +311,7 @@ interface AccountRouteChildren {
   AccountOrdersRoute: typeof AccountOrdersRoute
   AccountReturnsRoute: typeof AccountReturnsRoute
   AccountRewardsRoute: typeof AccountRewardsRoute
+  AccountSecurityRoute: typeof AccountSecurityRoute
   AccountWishlistRoute: typeof AccountWishlistRoute
   AccountIndexRoute: typeof AccountIndexRoute
 }
@@ -301,6 +321,7 @@ const AccountRouteChildren: AccountRouteChildren = {
   AccountOrdersRoute: AccountOrdersRoute,
   AccountReturnsRoute: AccountReturnsRoute,
   AccountRewardsRoute: AccountRewardsRoute,
+  AccountSecurityRoute: AccountSecurityRoute,
   AccountWishlistRoute: AccountWishlistRoute,
   AccountIndexRoute: AccountIndexRoute,
 }
