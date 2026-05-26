@@ -1,12 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, CreditCard, Truck,
-  Tag, Boxes, BarChart3, Settings, ShieldCheck, FileText,
-  Bell, Search, ChevronLeft, ChevronRight, LogOut, Menu, X,
-  AlertTriangle, Info, CheckCircle2, AlertOctagon,
+  Tag, Boxes, BarChart3, Settings, ShieldCheck, FileText, MessageSquare,
+  Bell, Search, ChevronLeft, ChevronRight, LogOut, Menu, X, Star,
+  AlertTriangle, Info, CheckCircle2, AlertOctagon, Shield,
 } from "lucide-react";
 import { AdminAuthProvider, useAdminAuth } from "@/store/adminAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +16,6 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { notifications } from "@/data/admin";
 import { cn } from "@/lib/utils";
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
@@ -23,15 +24,18 @@ const NAV: NavItem[] = [
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/customers", label: "Customers", icon: Users },
+  { to: "/admin/reviews", label: "Reviews", icon: Star },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/shipping", label: "Shipping", icon: Truck },
   { to: "/admin/promotions", label: "Promotions", icon: Tag },
   { to: "/admin/inventory", label: "Inventory", icon: Boxes },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+  { to: "/admin/cms", label: "CMS & Banners", icon: FileText },
+  { to: "/admin/tickets", label: "Support", icon: MessageSquare },
+  { to: "/admin/security", label: "Security & Audit", icon: Shield },
   { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck },
-  { to: "/admin/cms", label: "CMS", icon: FileText },
-] as const;
+  { to: "/admin/settings", label: "Settings", icon: Settings },
+];
 
 export function AdminShell({ children, title }: { children: ReactNode; title: string }) {
   return (
@@ -63,7 +67,7 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
         <div className="max-w-md text-center space-y-3 rounded-2xl admin-card p-8">
           <h2 className="text-xl font-semibold">No admin access</h2>
           <p className="text-sm text-muted-foreground">
-            Your account ({user?.email}) doesn't have admin or editor role yet. Ask an admin to grant you access.
+            Your account ({user?.email}) doesn't have admin or editor role yet.
           </p>
           <Button variant="outline" onClick={async () => { await logout(); navigate({ to: "/admin/login" }); }}>
             <LogOut className="h-4 w-4" /> Sign out
@@ -75,23 +79,13 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar - desktop */}
-      <aside
-        className={cn(
-          "hidden lg:flex flex-col border-r border-border/70 admin-glass transition-all duration-200",
-          collapsed ? "w-16" : "w-64",
-        )}
-      >
+      <aside className={cn("hidden lg:flex flex-col border-r border-border/70 admin-glass transition-all duration-200", collapsed ? "w-16" : "w-64")}>
         <SidebarBody collapsed={collapsed} />
-        <button
-          onClick={() => setCollapsed((c) => !c)}
-          className="m-2 flex items-center justify-center rounded-md border border-border/70 bg-background/70 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
-        >
+        <button onClick={() => setCollapsed((c) => !c)} className="m-2 flex items-center justify-center rounded-md border border-border/70 bg-background/70 py-1.5 text-muted-foreground hover:text-foreground transition-colors">
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
       </aside>
 
-      {/* Sidebar - mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/60" />
@@ -106,7 +100,6 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
       )}
 
       <div className="flex flex-1 flex-col min-w-0">
-        {/* Top header */}
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/60 admin-glass px-4">
           <button className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
@@ -119,34 +112,7 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
               <span className="admin-kbd absolute right-2 top-1/2 -translate-y-1/2 hidden xl:inline">⌘K</span>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
-                  <Bell className="h-4 w-4" />
-                  <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-content-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
-                    {notifications.length}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {notifications.map((n) => {
-                  const I = n.type === "warning" ? AlertTriangle : n.type === "danger" ? AlertOctagon : n.type === "success" ? CheckCircle2 : Info;
-                  const color = n.type === "warning" ? "text-warning" : n.type === "danger" ? "text-destructive" : n.type === "success" ? "text-success" : "text-secondary";
-                  return (
-                    <DropdownMenuItem key={n.id} className="flex items-start gap-2 py-2">
-                      <I className={cn("mt-0.5 h-4 w-4 shrink-0", color)} />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">{n.title}</span>
-                        <span className="text-xs text-muted-foreground">{n.body}</span>
-                        <span className="mt-0.5 text-[10px] text-muted-foreground">{n.time}</span>
-                      </div>
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NotificationsBell />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -165,9 +131,9 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Account settings</DropdownMenuItem>
-                <DropdownMenuItem>Activity log</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate({ to: "/account" })}>Storefront profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate({ to: "/admin/settings" })}>Account settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate({ to: "/admin/security" })}>Activity log</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => { await logout(); navigate({ to: "/admin/login" }); }}>
                   <LogOut className="mr-2 h-4 w-4" /> Sign out
@@ -180,6 +146,73 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
+  );
+}
+
+function NotificationsBell() {
+  const qc = useQueryClient();
+  const { data: notifs = [] } = useQuery({
+    queryKey: ["admin-notifications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("admin_notifications").select("*").order("created_at", { ascending: false }).limit(8);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const unread = notifs.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    const ch = supabase
+      .channel("admin-notifications-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_notifications" }, () => {
+        qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
+  }, [qc]);
+
+  const markAllRead = async () => {
+    await supabase.from("admin_notifications").update({ read: true }).eq("read", false);
+    qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon" className="relative">
+          <Bell className="h-4 w-4" />
+          {unread > 0 && (
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-content-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+              {unread}
+            </span>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-80">
+        <div className="flex items-center justify-between px-2 py-1.5">
+          <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+          {unread > 0 && <button onClick={markAllRead} className="text-xs text-secondary hover:underline">Mark all read</button>}
+        </div>
+        <DropdownMenuSeparator />
+        {notifs.length === 0 ? (
+          <div className="py-6 text-center text-xs text-muted-foreground">No notifications</div>
+        ) : notifs.map((n) => {
+          const I = n.level === "warning" ? AlertTriangle : n.level === "danger" ? AlertOctagon : n.level === "success" ? CheckCircle2 : Info;
+          const color = n.level === "warning" ? "text-warning" : n.level === "danger" ? "text-destructive" : n.level === "success" ? "text-success" : "text-secondary";
+          return (
+            <DropdownMenuItem key={n.id} className={cn("flex items-start gap-2 py-2", !n.read && "bg-secondary/5")}>
+              <I className={cn("mt-0.5 h-4 w-4 shrink-0", color)} />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{n.title}</span>
+                {n.body && <span className="text-xs text-muted-foreground">{n.body}</span>}
+                <span className="mt-0.5 text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleString()}</span>
+              </div>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -214,9 +247,7 @@ function SidebarBody({ collapsed, onNavigate, hideBrand }: { collapsed: boolean;
               onClick={onNavigate}
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-secondary text-secondary-foreground font-medium"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                active ? "bg-secondary text-secondary-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 collapsed && "justify-center px-2",
               )}
               title={item.label}
@@ -229,7 +260,7 @@ function SidebarBody({ collapsed, onNavigate, hideBrand }: { collapsed: boolean;
       </nav>
       {!collapsed && (
         <div className="border-t border-border p-3 text-[11px] text-muted-foreground">
-          v1.0 · Shopzy Admin
+          v2.0 · Shopzy Admin
         </div>
       )}
     </>
