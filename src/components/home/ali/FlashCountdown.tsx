@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 
 export function FlashCountdown({ hours = 6 }: { hours?: number }) {
   const [end] = useState(() => Date.now() + hours * 3600 * 1000);
-  const [now, setNow] = useState(Date.now());
+  // Initialize `now` to `end` so SSR + first client render both show 00:00:00,
+  // avoiding hydration mismatches. The effect updates it on mount.
+  const [now, setNow] = useState(end);
   useEffect(() => {
+    setNow(Date.now());
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
