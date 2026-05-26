@@ -9,7 +9,7 @@ export async function logAdminAction(action: string, entity?: string, entityId?:
     action,
     entity,
     entity_id: entityId,
-    meta: meta ?? null,
+    meta: (meta ?? null) as never,
   });
 }
 
