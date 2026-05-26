@@ -26,7 +26,7 @@ export function BottomNav() {
         {items.map(({ Icon, label, to, active, badge }) => (
           <li key={label}>
             <Link
-              to={to}
+              to={to as string}
               className={`relative flex flex-col items-center gap-0.5 py-2 text-[10px] font-semibold ${
                 active ? "text-hot" : "text-muted-foreground"
               }`}
