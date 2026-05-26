@@ -9,14 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VouchersRouteImport } from './routes/vouchers'
+import { Route as TopRankingRouteImport } from './routes/top-ranking'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FlashSaleRouteImport } from './routes/flash-sale'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
+import { Route as PromotionsSlugRouteImport } from './routes/promotions.$slug'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -38,14 +46,39 @@ import { Route as AccountReturnsRouteImport } from './routes/account.returns'
 import { Route as AccountOrdersRouteImport } from './routes/account.orders'
 import { Route as AccountAddressesRouteImport } from './routes/account.addresses'
 
+const VouchersRoute = VouchersRouteImport.update({
+  id: '/vouchers',
+  path: '/vouchers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TopRankingRoute = TopRankingRouteImport.update({
+  id: '/top-ranking',
+  path: '/top-ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlashSaleRoute = FlashSaleRouteImport.update({
+  id: '/flash-sale',
+  path: '/flash-sale',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompareRoute = CompareRouteImport.update({
@@ -56,6 +89,16 @@ const CompareRoute = CompareRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountRoute = AccountRouteImport.update({
@@ -77,6 +120,11 @@ const AccountIndexRoute = AccountIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AccountRoute,
+} as any)
+const PromotionsSlugRoute = PromotionsSlugRouteImport.update({
+  id: '/promotions/$slug',
+  path: '/promotions/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
@@ -182,10 +230,17 @@ const AccountAddressesRoute = AccountAddressesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/compare': typeof CompareRoute
+  '/flash-sale': typeof FlashSaleRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/search': typeof SearchRoute
+  '/top-ranking': typeof TopRankingRoute
+  '/vouchers': typeof VouchersRoute
   '/account/addresses': typeof AccountAddressesRoute
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
@@ -206,15 +261,23 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
+  '/promotions/$slug': typeof PromotionsSlugRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/compare': typeof CompareRoute
+  '/flash-sale': typeof FlashSaleRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/search': typeof SearchRoute
+  '/top-ranking': typeof TopRankingRoute
+  '/vouchers': typeof VouchersRoute
   '/account/addresses': typeof AccountAddressesRoute
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
@@ -235,6 +298,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
+  '/promotions/$slug': typeof PromotionsSlugRoute
   '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -242,10 +306,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
+  '/cart': typeof CartRoute
+  '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/compare': typeof CompareRoute
+  '/flash-sale': typeof FlashSaleRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/search': typeof SearchRoute
+  '/top-ranking': typeof TopRankingRoute
+  '/vouchers': typeof VouchersRoute
   '/account/addresses': typeof AccountAddressesRoute
   '/account/orders': typeof AccountOrdersRoute
   '/account/returns': typeof AccountReturnsRoute
@@ -266,6 +337,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$id': typeof ProductIdRoute
+  '/promotions/$slug': typeof PromotionsSlugRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -274,10 +346,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/cart'
+    | '/categories'
     | '/checkout'
     | '/compare'
+    | '/flash-sale'
     | '/login'
+    | '/messages'
     | '/products'
+    | '/search'
+    | '/top-ranking'
+    | '/vouchers'
     | '/account/addresses'
     | '/account/orders'
     | '/account/returns'
@@ -298,15 +377,23 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/category/$slug'
     | '/product/$id'
+    | '/promotions/$slug'
     | '/account/'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cart'
+    | '/categories'
     | '/checkout'
     | '/compare'
+    | '/flash-sale'
     | '/login'
+    | '/messages'
     | '/products'
+    | '/search'
+    | '/top-ranking'
+    | '/vouchers'
     | '/account/addresses'
     | '/account/orders'
     | '/account/returns'
@@ -327,16 +414,24 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/category/$slug'
     | '/product/$id'
+    | '/promotions/$slug'
     | '/account'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/account'
+    | '/cart'
+    | '/categories'
     | '/checkout'
     | '/compare'
+    | '/flash-sale'
     | '/login'
+    | '/messages'
     | '/products'
+    | '/search'
+    | '/top-ranking'
+    | '/vouchers'
     | '/account/addresses'
     | '/account/orders'
     | '/account/returns'
@@ -357,6 +452,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/category/$slug'
     | '/product/$id'
+    | '/promotions/$slug'
     | '/account/'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -364,10 +460,17 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRouteWithChildren
+  CartRoute: typeof CartRoute
+  CategoriesRoute: typeof CategoriesRoute
   CheckoutRoute: typeof CheckoutRoute
   CompareRoute: typeof CompareRoute
+  FlashSaleRoute: typeof FlashSaleRoute
   LoginRoute: typeof LoginRoute
+  MessagesRoute: typeof MessagesRoute
   ProductsRoute: typeof ProductsRoute
+  SearchRoute: typeof SearchRoute
+  TopRankingRoute: typeof TopRankingRoute
+  VouchersRoute: typeof VouchersRoute
   AdminCmsRoute: typeof AdminCmsRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminInventoryRoute: typeof AdminInventoryRoute
@@ -382,11 +485,33 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   CategorySlugRoute: typeof CategorySlugRoute
   ProductIdRoute: typeof ProductIdRoute
+  PromotionsSlugRoute: typeof PromotionsSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vouchers': {
+      id: '/vouchers'
+      path: '/vouchers'
+      fullPath: '/vouchers'
+      preLoaderRoute: typeof VouchersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/top-ranking': {
+      id: '/top-ranking'
+      path: '/top-ranking'
+      fullPath: '/top-ranking'
+      preLoaderRoute: typeof TopRankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products': {
       id: '/products'
       path: '/products'
@@ -394,11 +519,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flash-sale': {
+      id: '/flash-sale'
+      path: '/flash-sale'
+      fullPath: '/flash-sale'
+      preLoaderRoute: typeof FlashSaleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compare': {
@@ -413,6 +552,20 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account': {
@@ -442,6 +595,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account/'
       preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof AccountRoute
+    }
+    '/promotions/$slug': {
+      id: '/promotions/$slug'
+      path: '/promotions/$slug'
+      fullPath: '/promotions/$slug'
+      preLoaderRoute: typeof PromotionsSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/product/$id': {
       id: '/product/$id'
@@ -612,10 +772,17 @@ const AccountRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRouteWithChildren,
+  CartRoute: CartRoute,
+  CategoriesRoute: CategoriesRoute,
   CheckoutRoute: CheckoutRoute,
   CompareRoute: CompareRoute,
+  FlashSaleRoute: FlashSaleRoute,
   LoginRoute: LoginRoute,
+  MessagesRoute: MessagesRoute,
   ProductsRoute: ProductsRoute,
+  SearchRoute: SearchRoute,
+  TopRankingRoute: TopRankingRoute,
+  VouchersRoute: VouchersRoute,
   AdminCmsRoute: AdminCmsRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminInventoryRoute: AdminInventoryRoute,
@@ -630,6 +797,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   CategorySlugRoute: CategorySlugRoute,
   ProductIdRoute: ProductIdRoute,
+  PromotionsSlugRoute: PromotionsSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport

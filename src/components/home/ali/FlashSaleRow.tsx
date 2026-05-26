@@ -1,4 +1,5 @@
 import { Zap } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { FlashCountdown } from "./FlashCountdown";
 import { products } from "@/data/products";
 
@@ -12,13 +13,20 @@ export function FlashSaleRow() {
           <h3 className="text-base font-extrabold text-foreground">Flash Sale</h3>
           <FlashCountdown hours={5} />
         </div>
-        <button className="text-xs font-semibold text-hot">See all →</button>
+        <Link to={"/flash-sale" as never} className="text-xs font-semibold text-hot hover:underline">
+          See all →
+        </Link>
       </div>
       <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden">
         {items.map((p) => {
           const off = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
           return (
-            <div key={p.id} className="w-28 shrink-0">
+            <Link
+              key={p.id}
+              to="/product/$id"
+              params={{ id: p.id }}
+              className="block w-28 shrink-0 transition active:scale-[0.97]"
+            >
               <div className="relative overflow-hidden rounded-lg bg-muted">
                 <img src={p.image} alt={p.title} className="aspect-square w-full object-cover" loading="lazy" />
                 <span className="absolute left-0 top-0 rounded-br-lg bg-hot px-1.5 py-0.5 text-[11px] font-extrabold text-hot-foreground">
@@ -29,7 +37,7 @@ export function FlashSaleRow() {
               <div className="text-[10px] text-muted-foreground line-through">
                 ${p.originalPrice}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
