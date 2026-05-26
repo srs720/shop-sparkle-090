@@ -1,4 +1,5 @@
 import { Crown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 const img = (s: string) => `https://picsum.photos/seed/${s}/300/300`;
 
@@ -51,7 +52,9 @@ export function TopRanking() {
           <Crown className="h-5 w-5 text-[oklch(0.75_0.17_75)]" />
           <h3 className="text-base font-extrabold text-foreground">Top Ranking</h3>
         </div>
-        <button className="text-xs font-semibold text-hot">More →</button>
+        <Link to={"/top-ranking" as never} className="text-xs font-semibold text-hot hover:underline">
+          More →
+        </Link>
       </div>
       <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden">
         {groups.map((g) => (
