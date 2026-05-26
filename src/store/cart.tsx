@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Product } from "@/data/products";
+import { supabase } from "@/integrations/supabase/client";
 
 export type CartItem = {
   product: Product;
@@ -19,7 +20,7 @@ type CartCtx = {
   count: number;
   subtotal: number;
   coupon: string | null;
-  applyCoupon: (code: string) => { ok: boolean; message: string };
+  applyCoupon: (code: string) => Promise<{ ok: boolean; message: string }>;
   removeCoupon: () => void;
   discount: number;
 };
@@ -27,12 +28,13 @@ type CartCtx = {
 const Ctx = createContext<CartCtx | null>(null);
 const KEY = "shop-cart-v1";
 const COUPON_KEY = "shop-coupon-v1";
-const COUPONS: Record<string, number> = { SAVE10: 0.1, MEGA20: 0.2, WELCOME5: 0.05 };
+const DISCOUNT_KEY = "shop-coupon-disc-v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
   const [coupon, setCoupon] = useState<string | null>(null);
+  const [couponRule, setCouponRule] = useState<{ type: string; value: number } | null>(null);
 
   useEffect(() => {
     try {
@@ -40,6 +42,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (raw) setItems(JSON.parse(raw));
       const c = typeof window !== "undefined" ? localStorage.getItem(COUPON_KEY) : null;
       if (c) setCoupon(c);
+      const d = typeof window !== "undefined" ? localStorage.getItem(DISCOUNT_KEY) : null;
+      if (d) {
+        try { setCouponRule(JSON.parse(d)); } catch { /* ignore */ }
+      }
     } catch {}
   }, []);
 
@@ -54,6 +60,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (coupon) localStorage.setItem(COUPON_KEY, coupon);
     else localStorage.removeItem(COUPON_KEY);
   }, [coupon]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (couponRule) localStorage.setItem(DISCOUNT_KEY, JSON.stringify(couponRule));
+    else localStorage.removeItem(DISCOUNT_KEY);
+  }, [couponRule]);
 
   const add: CartCtx["add"] = (p, opts = {}) => {
     const qty = opts.qty ?? 1;
@@ -75,15 +87,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const count = items.reduce((n, i) => n + i.qty, 0);
   const subtotal = items.reduce((n, i) => n + i.qty * i.product.price, 0);
-  const discount = coupon && COUPONS[coupon] ? +(subtotal * COUPONS[coupon]).toFixed(2) : 0;
+  const discount = couponRule
+    ? couponRule.type === "percent"
+      ? +(subtotal * (couponRule.value / 100)).toFixed(2)
+      : +Math.min(subtotal, couponRule.value).toFixed(2)
+    : 0;
 
-  const applyCoupon = (code: string) => {
-    const c = code.trim().toUpperCase();
-    if (!COUPONS[c]) return { ok: false, message: "Invalid coupon code" };
-    setCoupon(c);
-    return { ok: true, message: `${Math.round(COUPONS[c] * 100)}% off applied!` };
+  const applyCoupon = async (code: string) => {
+    const c = code.trim();
+    if (!c) return { ok: false, message: "Enter a coupon code" };
+    const { data, error } = await supabase.rpc("validate_coupon", {
+      _code: c,
+      _order_subtotal: subtotal,
+    });
+    if (error) return { ok: false, message: "Could not validate coupon" };
+    const r = data as { ok: boolean; message: string; code?: string; discount_type?: string; discount_value?: number };
+    if (!r?.ok) return { ok: false, message: r?.message ?? "Invalid coupon code" };
+    setCoupon(r.code ?? c.toUpperCase());
+    setCouponRule({ type: r.discount_type ?? "percent", value: Number(r.discount_value ?? 0) });
+    return { ok: true, message: r.message ?? "Coupon applied" };
   };
-  const removeCoupon = () => setCoupon(null);
+  const removeCoupon = () => { setCoupon(null); setCouponRule(null); };
 
   return (
     <Ctx.Provider value={{ items, open, setOpen, add, remove, setQty, clear, count, subtotal, coupon, applyCoupon, removeCoupon, discount }}>
