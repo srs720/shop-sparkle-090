@@ -2,13 +2,21 @@ import { Home, LayoutGrid, MessageCircle, ShoppingCart, User } from "lucide-reac
 import { Link } from "@tanstack/react-router";
 import { useCart } from "@/store/cart";
 
-const items = [
+type NavItem = {
+  Icon: typeof Home;
+  label: string;
+  to: string;
+  active?: boolean;
+  badge?: boolean;
+};
+
+const items: NavItem[] = [
   { Icon: Home, label: "Home", to: "/", active: true },
   { Icon: LayoutGrid, label: "Categories", to: "/products" },
   { Icon: MessageCircle, label: "Messages", to: "/account" },
   { Icon: ShoppingCart, label: "Cart", to: "/checkout", badge: true },
   { Icon: User, label: "Account", to: "/account" },
-] as const;
+];
 
 export function BottomNav() {
   const { count } = useCart();
