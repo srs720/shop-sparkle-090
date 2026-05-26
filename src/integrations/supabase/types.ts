@@ -783,7 +783,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      payment_gateways_public: {
+        Row: {
+          enabled: boolean | null
+          id: string | null
+          name: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          enabled?: boolean | null
+          id?: string | null
+          name?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          enabled?: boolean | null
+          id?: string | null
+          name?: string | null
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       claim_first_admin: { Args: never; Returns: boolean }
@@ -793,6 +813,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      validate_coupon: {
+        Args: { _code: string; _order_subtotal: number }
+        Returns: Json
       }
     }
     Enums: {
