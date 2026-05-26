@@ -22,7 +22,7 @@ export function Vouchers() {
             className={`relative flex h-20 w-36 shrink-0 items-center overflow-hidden rounded-lg bg-gradient-to-br ${v.color} text-white shadow-sm`}
           >
             <span className="absolute left-[88px] top-0 h-full w-px border-l border-dashed border-white/50" />
-            <span className="absolute -left-1.5 left-[86px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-page" />
+            <span className="absolute left-[82px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-page" />
             <div className="flex w-[88px] flex-col items-center justify-center px-2">
               <div className="text-2xl font-black leading-none">{v.amount}</div>
               <div className="mt-1 text-[10px] opacity-90">Min. spend {v.min}</div>
