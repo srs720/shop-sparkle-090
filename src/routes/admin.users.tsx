@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldCheck, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({ meta: [{ title: "Users & Roles — Shopzy Admin" }] }),
   component: () => <AdminShell title="Users & Roles"><Page /></AdminShell>,
 });
-
-const team = [
-  { name: "Siam Hosain", email: "siamhosain720@gmail.com", role: "Super Admin", last: "now" },
-  { name: "Ayesha Rahman", email: "ayesha@shopzy.com", role: "Admin", last: "2h ago" },
-  { name: "Tanvir Hasan", email: "tanvir@shopzy.com", role: "Editor", last: "yesterday" },
-  { name: "Mehedi Karim", email: "mehedi@shopzy.com", role: "Viewer", last: "3 days ago" },
-  { name: "Nusrat Jahan", email: "nusrat@shopzy.com", role: "Editor", last: "1 week ago" },
-];
 
 const perms = [
   { mod: "Products", admin: true, editor: true, viewer: false },
@@ -30,6 +25,36 @@ const perms = [
 ];
 
 function Page() {
+  const { data: team = [], isLoading } = useQuery({
+    queryKey: ["admin-team-members"],
+    queryFn: async () => {
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("user_id, role, created_at")
+        .order("created_at", { ascending: false });
+      if (!roles?.length) return [];
+      const ids = Array.from(new Set(roles.map((r) => r.user_id)));
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, updated_at")
+        .in("id", ids);
+      const map = new Map((profiles ?? []).map((p) => [p.id, p]));
+      const seen = new Set<string>();
+      return roles
+        .filter((r) => (seen.has(r.user_id) ? false : (seen.add(r.user_id), true)))
+        .map((r) => {
+          const p = map.get(r.user_id);
+          return {
+            id: r.user_id,
+            name: p?.full_name ?? p?.email?.split("@")[0] ?? "Unknown",
+            email: p?.email ?? "—",
+            role: r.role,
+            last: p?.updated_at ? new Date(p.updated_at).toLocaleDateString() : "—",
+          };
+        });
+    },
+  });
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <Card>
@@ -41,8 +66,14 @@ function Page() {
           <Table>
             <TableHeader><TableRow><TableHead>Member</TableHead><TableHead>Role</TableHead><TableHead>Last active</TableHead><TableHead></TableHead></TableRow></TableHeader>
             <TableBody>
-              {team.map((t) => (
-                <TableRow key={t.email}>
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <TableRow key={i}><TableCell colSpan={4}><Skeleton className="h-8 w-full" /></TableCell></TableRow>
+                ))
+              ) : team.length === 0 ? (
+                <TableRow><TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">No team members yet</TableCell></TableRow>
+              ) : team.map((t) => (
+                <TableRow key={t.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8"><AvatarFallback className="bg-secondary/30 text-xs">{t.name.split(" ").map(n=>n[0]).join("")}</AvatarFallback></Avatar>
