@@ -190,3 +190,54 @@
     color: var(--color-foreground);
   }
 }
+
+/* ============================================================
+ * Admin Premium UI — Vercel/Stripe-inspired glassmorphism
+ * ============================================================ */
+.admin-scope {
+  --admin-surface: oklch(1 0 0 / 0.7);
+  --admin-surface-strong: oklch(1 0 0 / 0.92);
+  --admin-border: oklch(0.92 0.005 250 / 0.9);
+  --admin-border-strong: oklch(0.88 0.01 250);
+  --admin-shadow-sm: 0 1px 2px 0 oklch(0.2 0.02 250 / 0.05);
+  --admin-shadow: 0 4px 24px -8px oklch(0.2 0.02 250 / 0.08), 0 1px 3px oklch(0.2 0.02 250 / 0.04);
+  --admin-shadow-lg: 0 20px 50px -12px oklch(0.2 0.02 250 / 0.15);
+  --admin-glow: 0 0 0 4px oklch(0.55 0.21 260 / 0.12);
+  background:
+    radial-gradient(60rem 30rem at 100% -10%, oklch(0.55 0.21 260 / 0.08), transparent 60%),
+    radial-gradient(50rem 30rem at -10% 110%, oklch(0.68 0.19 40 / 0.07), transparent 60%),
+    oklch(0.985 0.003 250);
+  min-height: 100vh;
+}
+.admin-glass {
+  background: var(--admin-surface);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow-sm);
+}
+.admin-card {
+  background: var(--admin-surface-strong);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  box-shadow: var(--admin-shadow);
+  transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+}
+.admin-card:hover { box-shadow: var(--admin-shadow-lg); border-color: var(--admin-border-strong); }
+.admin-row { transition: background-color .15s ease; }
+.admin-row:hover { background: oklch(0.55 0.21 260 / 0.04); }
+.admin-kbd {
+  font: 500 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 2px 6px; border-radius: 4px;
+  background: oklch(0.96 0.005 250); border: 1px solid var(--admin-border-strong);
+  color: oklch(0.4 0.02 250);
+}
+.admin-gradient-text {
+  background: linear-gradient(135deg, oklch(0.55 0.21 260), oklch(0.68 0.19 40));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.admin-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  border: 1px solid currentColor;
+}

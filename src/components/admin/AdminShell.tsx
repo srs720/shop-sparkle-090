@@ -36,7 +36,7 @@ const NAV: NavItem[] = [
 export function AdminShell({ children, title }: { children: ReactNode; title: string }) {
   return (
     <AdminAuthProvider>
-      <div className="dark min-h-screen bg-background text-foreground">
+      <div className="admin-scope min-h-screen text-foreground">
         <Inner title={title}>{children}</Inner>
       </div>
     </AdminAuthProvider>
@@ -44,19 +44,33 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
 }
 
 function Inner({ children, title }: { children: ReactNode; title: string }) {
-  const { isAuthed, user, logout } = useAdminAuth();
+  const { isAuthed, user, logout, loading, canEdit } = useAdminAuth();
   const navigate = useNavigate();
-  const [ready, setReady] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => { setReady(true); }, []);
   useEffect(() => {
-    if (ready && !isAuthed) navigate({ to: "/admin/login" });
-  }, [ready, isAuthed, navigate]);
+    if (!loading && !isAuthed) navigate({ to: "/admin/login" });
+  }, [loading, isAuthed, navigate]);
 
-  if (!ready || !isAuthed) {
+  if (loading || !isAuthed) {
     return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Loading admin…</div>;
+  }
+
+  if (!canEdit) {
+    return (
+      <div className="grid min-h-screen place-items-center p-6">
+        <div className="max-w-md text-center space-y-3 rounded-2xl admin-card p-8">
+          <h2 className="text-xl font-semibold">No admin access</h2>
+          <p className="text-sm text-muted-foreground">
+            Your account ({user?.email}) doesn't have admin or editor role yet. Ask an admin to grant you access.
+          </p>
+          <Button variant="outline" onClick={async () => { await logout(); navigate({ to: "/admin/login" }); }}>
+            <LogOut className="h-4 w-4" /> Sign out
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -64,14 +78,14 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
       {/* Sidebar - desktop */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col border-r border-border bg-card transition-all duration-200",
+          "hidden lg:flex flex-col border-r border-border/70 admin-glass transition-all duration-200",
           collapsed ? "w-16" : "w-64",
         )}
       >
         <SidebarBody collapsed={collapsed} />
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="m-2 flex items-center justify-center rounded-md border border-border bg-background py-1.5 text-muted-foreground hover:text-foreground"
+          className="m-2 flex items-center justify-center rounded-md border border-border/70 bg-background/70 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
@@ -93,15 +107,16 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
 
       <div className="flex flex-1 flex-col min-w-0">
         {/* Top header */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-card/95 px-4 backdrop-blur">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/60 admin-glass px-4">
           <button className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
           </button>
-          <h1 className="text-base font-semibold truncate">{title}</h1>
+          <h1 className="text-base font-semibold truncate admin-gradient-text">{title}</h1>
           <div className="ml-auto flex items-center gap-2">
             <div className="relative hidden md:block">
               <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search orders, products, users…" className="h-9 w-72 pl-8 bg-background" />
+              <Input placeholder="Search orders, products, users…" className="h-9 w-72 pl-8 bg-background/70 border-border/70" />
+              <span className="admin-kbd absolute right-2 top-1/2 -translate-y-1/2 hidden xl:inline">⌘K</span>
             </div>
 
             <DropdownMenu>
@@ -135,13 +150,15 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 hover:bg-accent">
+                <button className="flex items-center gap-2 rounded-md border border-border/70 bg-background/70 px-2 py-1.5 hover:bg-accent transition-colors">
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">SH</AvatarFallback>
+                    <AvatarFallback className="bg-gradient-to-br from-secondary to-primary text-white text-xs">
+                      {(user?.name ?? "A").slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="hidden md:flex flex-col items-start leading-tight">
                     <span className="text-xs font-medium">{user?.name}</span>
-                    <span className="text-[10px] text-muted-foreground">Super Admin</span>
+                    <span className="text-[10px] text-muted-foreground capitalize">{user?.roles[0] ?? "viewer"}</span>
                   </div>
                 </button>
               </DropdownMenuTrigger>
@@ -152,7 +169,7 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
                 <DropdownMenuItem>Account settings</DropdownMenuItem>
                 <DropdownMenuItem>Activity log</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => { logout(); navigate({ to: "/admin/login" }); }}>
+                <DropdownMenuItem onClick={async () => { await logout(); navigate({ to: "/admin/login" }); }}>
                   <LogOut className="mr-2 h-4 w-4" /> Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -160,7 +177,7 @@ function Inner({ children, title }: { children: ReactNode; title: string }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 bg-background">{children}</main>
+        <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
   );
