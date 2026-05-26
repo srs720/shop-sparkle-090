@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="flex min-h-screen flex-col bg-page">
+    <div className="flex flex-col bg-page">
       <MobileSearchHeader />
       <TrustBadges />
       <div className="mx-auto w-full max-w-3xl flex-1 space-y-3 px-3 py-3">
