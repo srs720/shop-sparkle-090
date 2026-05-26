@@ -1,15 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { HeroSlider } from "@/components/home/HeroSlider";
-import { FlashSale } from "@/components/home/FlashSale";
-import { CategoryGrid } from "@/components/home/CategoryGrid";
-import { ProductSection } from "@/components/home/ProductSection";
-import { bestSellers, newArrivals, products } from "@/data/products";
+import { MobileSearchHeader } from "@/components/home/ali/MobileSearchHeader";
+import { TrustBadges } from "@/components/home/ali/TrustBadges";
+import { HeroBanner } from "@/components/home/ali/HeroBanner";
+import { QuickCategories } from "@/components/home/ali/QuickCategories";
+import { Vouchers } from "@/components/home/ali/Vouchers";
+import { MegaSaleBanner } from "@/components/home/ali/MegaSaleBanner";
+import { FlashSaleRow } from "@/components/home/ali/FlashSaleRow";
+import { TopRanking } from "@/components/home/ali/TopRanking";
+import { FeedTabs } from "@/components/home/ali/FeedTabs";
+import { ForYouGrid } from "@/components/home/ali/ForYouGrid";
+import { BottomNav } from "@/components/home/ali/BottomNav";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Shopzy — Shop smarter, save bigger" },
-      { name: "description", content: "Discover millions of deals on electronics, fashion, home and more." },
+      {
+        name: "description",
+        content:
+          "Daily deals on fashion, electronics, home & more. Flash sales, vouchers and free delivery.",
+      },
     ],
   }),
   component: Index,
@@ -17,13 +27,20 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="container mx-auto space-y-6 px-3 py-4 md:px-4 md:py-6">
-      <HeroSlider />
-      <FlashSale />
-      <CategoryGrid />
-      <ProductSection title="Just For You" products={products.slice(0, 12)} viewAllHref="/category/all" />
-      <ProductSection title="Best Sellers" products={bestSellers()} viewAllHref="/category/all" />
-      <ProductSection title="New Arrivals" products={newArrivals()} viewAllHref="/category/all" />
+    <div className="flex flex-col bg-page">
+      <MobileSearchHeader />
+      <TrustBadges />
+      <div className="mx-auto w-full max-w-3xl flex-1 space-y-3 px-3 py-3">
+        <HeroBanner />
+        <QuickCategories />
+        <Vouchers />
+        <MegaSaleBanner />
+        <FlashSaleRow />
+        <TopRanking />
+        <FeedTabs />
+        <ForYouGrid />
+      </div>
+      <BottomNav />
     </div>
   );
 }
