@@ -14,11 +14,12 @@ import { NotificationOptIn } from "./NotificationOptIn";
 export function Layout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isMobileHome = pathname === "/";
+  const isAdmin = pathname.startsWith("/admin");
   return (
     <AppProvider>
     <CartProvider>
       <div className="flex min-h-screen flex-col bg-background">
-        {!isMobileHome && (
+        {!isMobileHome && !isAdmin && (
           <header className="sticky top-0 z-40 shadow-sm">
             <TopBar />
             <MainHeader />
@@ -28,11 +29,11 @@ export function Layout() {
         <main className="flex-1" id="main">
           <Outlet />
         </main>
-        {!isMobileHome && <Footer />}
-        <CartDrawer />
-        <AuthModal />
-        {!isMobileHome && <FloatingWidgets />}
-        <NotificationOptIn />
+        {!isMobileHome && !isAdmin && <Footer />}
+        {!isAdmin && <CartDrawer />}
+        {!isAdmin && <AuthModal />}
+        {!isMobileHome && !isAdmin && <FloatingWidgets />}
+        {!isAdmin && <NotificationOptIn />}
         <Toaster />
       </div>
     </CartProvider>
