@@ -80,7 +80,7 @@ export function CartDrawer() {
                 ) : (
                   <div className="flex gap-2">
                     <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter code" className="h-9" />
-                    <Button size="sm" onClick={() => { const r = applyCoupon(code); r.ok ? toast.success(r.message) : toast.error(r.message); setCode(""); }}>Apply</Button>
+                    <Button size="sm" onClick={async () => { const r = await applyCoupon(code); r.ok ? toast.success(r.message) : toast.error(r.message); setCode(""); }}>Apply</Button>
                   </div>
                 )}
               </div>
