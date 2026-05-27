@@ -21,21 +21,24 @@ export function BottomNav() {
   const { count } = useCart();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav className="sticky bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
+    <nav className="sticky bottom-0 z-40 border-t border-white/40 bg-white/70 backdrop-blur-xl backdrop-saturate-150 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_oklch(0.55_0.13_195/0.25)]">
       <ul className="grid grid-cols-5">
         {items.map(({ Icon, label, to, badge }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+          const active =
+            to === "/"
+              ? pathname === "/"
+              : pathname === to || pathname.startsWith(`${to}/`);
           return (
             <li key={label}>
               <Link
                 to={to as never}
-                className={`relative flex flex-col items-center gap-0.5 py-2 text-[10px] font-semibold transition-colors active:scale-95 ${
-                  active ? "text-hot" : "text-muted-foreground hover:text-foreground"
+                className={`relative flex flex-col items-center gap-0.5 py-2 text-[10px] font-semibold transition-all active:scale-95 ${
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className={`h-5 w-5 transition-colors ${active ? "text-hot" : ""}`} />
+                <Icon className={`h-5 w-5 transition-colors ${active ? "text-primary" : ""}`} />
                 {badge && count > 0 && (
-                  <span className="absolute right-[calc(50%-22px)] top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-hot px-1 text-[9px] font-bold text-hot-foreground">
+                  <span className="absolute right-[calc(50%-22px)] top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground shadow-md">
                     {count}
                   </span>
                 )}

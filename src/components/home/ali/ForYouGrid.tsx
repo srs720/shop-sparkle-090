@@ -1,7 +1,9 @@
-import { Star } from "lucide-react";
+import { Star, Plus } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useStoreProducts, useRealtimeInvalidate } from "@/hooks/useStoreProducts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCart } from "@/store/cart";
+import { toast } from "sonner";
 
 const formatSold = (n: number) =>
   n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k+ Sold` : `${n} Sold`;
@@ -9,6 +11,7 @@ const formatSold = (n: number) =>
 export function ForYouGrid() {
   const { data: feed = [], isLoading } = useStoreProducts({ limit: 30 });
   useRealtimeInvalidate("products", "store-products");
+  const { add } = useCart();
 
   if (isLoading) {
     return (
@@ -34,7 +37,7 @@ export function ForYouGrid() {
             key={p.id}
             to="/product/$id"
             params={{ id: p.id }}
-            className="overflow-hidden rounded-lg bg-card shadow-sm transition active:scale-[0.98]"
+            className="group relative overflow-hidden rounded-lg bg-card shadow-sm transition active:scale-[0.98]"
           >
             <div className="relative aspect-square bg-muted">
               <img src={p.image} alt={p.title} className="h-full w-full object-cover" loading="lazy" />
@@ -53,6 +56,29 @@ export function ForYouGrid() {
                   Free Delivery
                 </span>
               )}
+              <button
+                type="button"
+                aria-label="Add to cart"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  add({
+                    id: p.id,
+                    title: p.title,
+                    image: p.image,
+                    price: p.price,
+                    originalPrice: p.originalPrice,
+                    rating: p.rating,
+                    reviews: 0,
+                    sold: p.sold,
+                    category: "",
+                  } as never);
+                  toast.success("Added to cart");
+                }}
+                className="absolute bottom-1.5 right-1.5 grid h-8 w-8 place-content-center rounded-full bg-primary text-primary-foreground shadow-lg backdrop-blur-md transition active:scale-90 hover:brightness-110"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             </div>
             <div className="space-y-1 p-2">
               <div className="line-clamp-2 text-[12px] leading-tight text-foreground">{p.title}</div>
