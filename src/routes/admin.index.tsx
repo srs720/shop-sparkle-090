@@ -105,7 +105,7 @@ function Dashboard() {
   const { data: topProducts = [] } = useQuery({
     queryKey: ["admin-dashboard", "top-products"],
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("id,title,price,image_url,stock,rating").order("rating", { ascending: false, nullsFirst: false }).limit(5);
+      const { data } = await supabase.from("products").select("id,name,price,image_url,stock,rating").order("rating", { ascending: false, nullsFirst: false }).limit(5);
       return data ?? [];
     },
   });
@@ -113,7 +113,7 @@ function Dashboard() {
   const { data: lowStockItems = [] } = useQuery({
     queryKey: ["admin-dashboard", "low-stock"],
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("id,title,stock").lt("stock", 10).order("stock", { ascending: true }).limit(6);
+      const { data } = await supabase.from("products").select("id,name,stock").lt("stock", 10).order("stock", { ascending: true }).limit(6);
       return data ?? [];
     },
   });
@@ -239,10 +239,10 @@ function Dashboard() {
             ) : topProducts.map((p) => (
               <div key={p.id} className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent/50 transition-colors">
                 <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
-                  {p.image_url && <img src={p.image_url} alt={p.title} className="h-full w-full object-cover" loading="lazy" />}
+                  {p.image_url && <img src={p.image_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium">{p.title}</div>
+                  <div className="truncate text-sm font-medium">{p.name}</div>
                   <div className="text-xs text-muted-foreground">${Number(p.price ?? 0).toFixed(2)} · {p.stock ?? 0} in stock</div>
                 </div>
                 {p.rating != null && (
@@ -316,7 +316,7 @@ function Dashboard() {
               <div key={p.id} className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/5 p-2.5">
                 <Zap className="h-4 w-4 shrink-0 text-warning mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-xs font-medium">Low stock: {p.title}</div>
+                  <div className="truncate text-xs font-medium">Low stock: {p.name}</div>
                   <div className="text-[11px] text-muted-foreground">Only {p.stock} units remaining</div>
                 </div>
               </div>
