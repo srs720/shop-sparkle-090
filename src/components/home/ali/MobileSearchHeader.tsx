@@ -7,17 +7,17 @@ export function MobileSearchHeader() {
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   return (
-    <div className="sticky top-0 z-40 bg-page/95 backdrop-blur supports-[backdrop-filter]:bg-page/80">
+    <div className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl backdrop-saturate-150">
       <div className="flex items-center gap-2 px-3 py-2">
         <button
           aria-label="Scan"
           onClick={() => toast("Scanner opening...")}
-          className="rounded-full p-1 text-foreground transition active:scale-90"
+          className="rounded-full p-2 text-foreground transition active:scale-90 hover:bg-white/60"
         >
           <ScanLine className="h-5 w-5" />
         </button>
         <form
-          className="flex h-10 flex-1 items-center overflow-hidden rounded-full border border-hot bg-card pl-3"
+          className="flex h-10 flex-1 items-center overflow-hidden rounded-full border border-primary/40 bg-white/80 pl-3 shadow-sm"
           onSubmit={(e) => {
             e.preventDefault();
             const query = q.trim();
