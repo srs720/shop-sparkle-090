@@ -44,6 +44,36 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          key_hash: string
+          label: string
+          prefix: string
+          revoked: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash: string
+          label: string
+          prefix: string
+          revoked?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash?: string
+          label?: string
+          prefix?: string
+          revoked?: boolean
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           key: string
@@ -134,6 +164,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cms_pages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          published: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean
@@ -176,6 +236,33 @@ export type Database = {
           min_order?: number | null
           starts_at?: string | null
           used_count?: number
+        }
+        Relationships: []
+      }
+      courier_partners: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          sort_order: number
+          tracking_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          sort_order?: number
+          tracking_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          sort_order?: number
+          tracking_url?: string | null
         }
         Relationships: []
       }
