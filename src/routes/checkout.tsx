@@ -21,7 +21,7 @@ export const Route = createFileRoute("/checkout")({
 const STEPS = ["Address", "Delivery", "Add-ons", "Payment", "Review"];
 
 function Checkout() {
-  const { items, subtotal, clear, coupon, discount } = useCart();
+  const { items, subtotal, clear, coupon, discount, freeShipping } = useCart();
   const { addresses, walletBalance } = useApp();
   const [step, setStep] = useState(0);
   const [placed, setPlaced] = useState(false);
@@ -39,7 +39,7 @@ function Checkout() {
   const [emiOpen, setEmiOpen] = useState(false);
   const [emiMonths, setEmiMonths] = useState(6);
 
-  const deliveryCost = delivery === "express" ? 9.99 : delivery === "nationwide" ? 5.99 : delivery === "pickup" ? 0 : 2.99;
+  const deliveryCost = freeShipping ? 0 : delivery === "express" ? 9.99 : delivery === "nationwide" ? 5.99 : delivery === "pickup" ? 0 : 2.99;
   const giftFee = gift ? 2.0 : 0;
   const ecoFee = eco ? 0.5 : 0;
   const donation = donate ? 1.0 : 0;

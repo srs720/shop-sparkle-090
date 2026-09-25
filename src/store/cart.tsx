@@ -23,6 +23,7 @@ type CartCtx = {
   applyCoupon: (code: string) => Promise<{ ok: boolean; message: string }>;
   removeCoupon: () => void;
   discount: number;
+  freeShipping: boolean;
 };
 
 const Ctx = createContext<CartCtx | null>(null);
@@ -87,11 +88,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const count = items.reduce((n, i) => n + i.qty, 0);
   const subtotal = items.reduce((n, i) => n + i.qty * i.product.price, 0);
-  const discount = couponRule
-    ? couponRule.type === "percent"
-      ? +(subtotal * (couponRule.value / 100)).toFixed(2)
-      : +Math.min(subtotal, couponRule.value).toFixed(2)
-    : 0;
+  const freeShipping = couponRule?.type === "free_shipping";
+  const discount = !couponRule || freeShipping
+    ? 0
+    : couponRule.type === "percent"
+      ? +(subtotal * (Math.min(100, couponRule.value) / 100)).toFixed(2)
+      : +Math.min(subtotal, Math.max(0, couponRule.value)).toFixed(2);
 
   const applyCoupon = async (code: string) => {
     const c = code.trim();
@@ -110,7 +112,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeCoupon = () => { setCoupon(null); setCouponRule(null); };
 
   return (
-    <Ctx.Provider value={{ items, open, setOpen, add, remove, setQty, clear, count, subtotal, coupon, applyCoupon, removeCoupon, discount }}>
+    <Ctx.Provider value={{ items, open, setOpen, add, remove, setQty, clear, count, subtotal, coupon, applyCoupon, removeCoupon, discount, freeShipping }}>
       {children}
     </Ctx.Provider>
   );
