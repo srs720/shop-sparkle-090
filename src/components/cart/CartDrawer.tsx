@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 
 export function CartDrawer() {
-  const { items, open, setOpen, setQty, remove, subtotal, coupon, applyCoupon, removeCoupon, discount } = useCart();
+  const { items, open, setOpen, setQty, remove, subtotal, coupon, applyCoupon, removeCoupon, discount, freeShipping } = useCart();
   const [code, setCode] = useState("");
   const [area, setArea] = useState("dhaka");
-  const delivery = area === "express" ? 9.99 : area === "outside" ? 5.99 : subtotal > 50 ? 0 : 2.99;
+  const delivery = freeShipping ? 0 : area === "express" ? 9.99 : area === "outside" ? 5.99 : subtotal > 50 ? 0 : 2.99;
   const total = Math.max(0, subtotal - discount) + (items.length ? delivery : 0);
 
   return (

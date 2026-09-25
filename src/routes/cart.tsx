@@ -14,7 +14,7 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { items, setQty, remove, subtotal, discount, coupon, applyCoupon, removeCoupon } = useCart();
+  const { items, setQty, remove, subtotal, discount, coupon, applyCoupon, removeCoupon, freeShipping } = useCart();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [applying, setApplying] = useState(false);
@@ -27,7 +27,7 @@ function CartPage() {
 
   const selectedItems = items.filter((i) => selected[i.product.id]);
   const selectedSubtotal = selectedItems.reduce((n, i) => n + i.product.price * i.qty, 0);
-  const shipping = selectedSubtotal > 50 || selectedSubtotal === 0 ? 0 : 4.99;
+  const shipping = freeShipping || selectedSubtotal > 50 || selectedSubtotal === 0 ? 0 : 4.99;
   const total = Math.max(0, selectedSubtotal - discount) + shipping;
 
   const handleApply = async () => {
