@@ -58,7 +58,7 @@ export function AuthForm({ onDone }: { onDone?: () => void }) {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
-      setError(/invalid login/i.test(msg) ? "Incorrect email or password." : /not confirmed/i.test(msg) ? "Please confirm your email first — check your inbox." : msg);
+      setError(/already registered/i.test(msg) ? "An account with this email already exists. Please sign in." : /invalid login/i.test(msg) ? "Incorrect email or password." : /not confirmed/i.test(msg) ? "Please confirm your email first — check your inbox." : msg);
     } finally {
       setBusy(false);
     }
