@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
 import { Package, Heart, Wallet, Gift } from "lucide-react";
 import { useApp } from "@/store/app";
 import { useCart } from "@/store/cart";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/account/")({
 function Dashboard() {
   const { wishlists, walletBalance, loyaltyPoints } = useApp();
   const { count } = useCart();
+  const { name } = useAuth();
   const wishCount = wishlists.reduce((n, l) => n + l.productIds.length, 0);
 
   const stats = [
@@ -22,7 +24,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Welcome back, Jane 👋</h1>
+      <h1 className="text-2xl font-bold">Welcome back, {name.split(" ")[0]} 👋</h1>
       <p className="text-sm text-muted-foreground">You have {count} items in your cart.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (

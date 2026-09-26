@@ -13,11 +13,13 @@ import { useCart } from "@/store/cart";
 import { useApp } from "@/store/app";
 import { categories } from "@/data/products";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export function MainHeader({ onMenuClick }: { onMenuClick?: () => void }) {
   const { count, setOpen } = useCart();
   const { setAuthOpen, compare, theme, toggleTheme } = useApp();
+  const { user, name } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [voice, setVoice] = useState(false);
@@ -84,10 +86,17 @@ export function MainHeader({ onMenuClick }: { onMenuClick?: () => void }) {
           <button onClick={toggleTheme} aria-label="Toggle theme" className="rounded p-2 hover:bg-white/10 md:hidden">
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
-          <button onClick={() => setAuthOpen(true)} className="hidden items-center gap-1.5 rounded px-2 py-1 text-sm hover:bg-white/10 sm:flex">
-            <User className="h-5 w-5" />
-            <span className="hidden md:inline">Login</span>
-          </button>
+          {user ? (
+            <Link to="/account" className="hidden items-center gap-1.5 rounded px-2 py-1 text-sm hover:bg-white/10 sm:flex">
+              <User className="h-5 w-5" />
+              <span className="hidden max-w-[120px] truncate md:inline">{name}</span>
+            </Link>
+          ) : (
+            <button onClick={() => setAuthOpen(true)} className="hidden items-center gap-1.5 rounded px-2 py-1 text-sm hover:bg-white/10 sm:flex">
+              <User className="h-5 w-5" />
+              <span className="hidden md:inline">Login</span>
+            </button>
+          )}
           <Link to="/account/wishlist" className="relative rounded p-2 hover:bg-white/10" aria-label="Wishlist">
             <Heart className="h-5 w-5" />
           </Link>
