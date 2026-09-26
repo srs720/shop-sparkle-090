@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VouchersRouteImport } from './routes/vouchers'
 import { Route as TopRankingRouteImport } from './routes/top-ranking'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
@@ -62,6 +63,11 @@ const TopRankingRoute = TopRankingRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsRoute = ProductsRouteImport.update({
@@ -256,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/top-ranking': typeof TopRankingRoute
   '/vouchers': typeof VouchersRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/top-ranking': typeof TopRankingRoute
   '/vouchers': typeof VouchersRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/top-ranking': typeof TopRankingRoute
   '/vouchers': typeof VouchersRoute
@@ -381,6 +390,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/products'
+    | '/reset-password'
     | '/search'
     | '/top-ranking'
     | '/vouchers'
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/products'
+    | '/reset-password'
     | '/search'
     | '/top-ranking'
     | '/vouchers'
@@ -462,6 +473,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/products'
+    | '/reset-password'
     | '/search'
     | '/top-ranking'
     | '/vouchers'
@@ -504,6 +516,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRoute
   ProductsRoute: typeof ProductsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   TopRankingRoute: typeof TopRankingRoute
   VouchersRoute: typeof VouchersRoute
@@ -549,6 +562,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products': {
@@ -840,6 +860,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRoute,
   ProductsRoute: ProductsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   TopRankingRoute: TopRankingRoute,
   VouchersRoute: VouchersRoute,
